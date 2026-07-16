@@ -1,0 +1,62 @@
+[package]
+name    = "matrixgame-rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wgpu        = "28"
+winit       = "0.30"
+bytemuck    = { version = "1", features = ["derive"] }
+glam        = "0.29"
+image       = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+log         = "0.4"
+anyhow      = "1"
+flate2      = "1"
+ruzstd = "0.8.3"
+
+# ── Native-only ──────────────────────────────────────────────────────────────
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+env_logger = "0.11"
+pollster   = "0.4"
+tokio      = { version = "1", features = ["rt", "fs"] }
+zstd = "0.13.3"
+
+# ── WASM-only ────────────────────────────────────────────────────────────────
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wgpu                        = { version = "28", features = ["webgl"] }
+wasm-bindgen                = "0.2"
+wasm-bindgen-futures        = "0.4"
+web-sys = { version = "0.3", features = [
+    "Window", "Document", "Element", "HtmlCanvasElement",
+    "Location", "UrlSearchParams",
+    "Performance",
+    "Request", "RequestInit", "Response",
+    "AudioContext", "AudioContextState", "AudioDestinationNode",
+    "AudioBuffer", "AudioBufferSourceNode", "AudioParam",
+    "GainNode", "StereoPannerNode",
+    "Storage",
+    "EventTarget",
+] }
+js-sys                      = "0.3"
+console_log                 = "1"
+console_error_panic_hook    = "0.1"
+
+[features]
+# Headless wasm benchmark (node): suppresses the auto-start winit app
+# and exports `bench_battle` (see src/lib.rs + bench_node.mjs).
+wasm-bench = []
+
+# Dev builds must also run at playable speed — always O3.
+# line-tables-only keeps backtraces but cuts binary sizes ~5-10x
+# (full debuginfo at O3 was filling the disk).
+[profile.dev]
+opt-level = 3
+debug = "line-tables-only"
+
+[profile.release]
+opt-level = 3
+lto       = true
+codegen-units = 1
