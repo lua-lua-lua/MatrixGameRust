@@ -5,7 +5,13 @@ A Rust port of **MatrixGame** — the Planetary Battles engine from
 wgpu and runs both natively and in the browser via WebAssembly.
 
 Original game data (`Data/robots.pkg`, `Data/Lang.dat`, …) is required and
-not included in this repository.
+not tracked in git. Download it from the
+[game-data release](https://github.com/IlyaGusev/MatrixGameRust/releases/tag/game-data):
+
+```bash
+curl -L https://github.com/IlyaGusev/MatrixGameRust/releases/download/game-data/Data.tar.zst \
+  | tar --zstd -x
+```
 
 ## Build & Run
 
